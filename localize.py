@@ -1,4 +1,3 @@
-#!/usr/bin env python 2.7
 """
 Localize
 Iterates the axioms in a ProverX object and replaces one of its variables with a constant
@@ -7,7 +6,7 @@ Iterates the axioms in a ProverX object and replaces one of its variables with a
 __authors__ = "Afonso Bras Sousa, Manuel Madelino, Henrique Duarte"
 __maintainer__ = "Afonso Bras Sousa"
 __email__ = "ab.sousa@campus.fct.unl.pt"
-__version__ = 0.1
+__version__ = 0.2
 
 import copy
 import re
@@ -52,7 +51,7 @@ Localize
 Iterates the axioms in a ProverX object and replaces one of its variables with a constant
 Ignores axioms in the ignore list
 """
-def localize(obj, goal, ignore_list=[]):
+def localize(obj, goal, ignore_list=[],constant_name="cLOCAL"):
     result = []
     obj.goals.replace(goal) # replace original goals with our localize goal
     for axiom in obj.axioms:
@@ -60,7 +59,7 @@ def localize(obj, goal, ignore_list=[]):
         vars = getVars(axiom)
         for var in vars:
             # print "DEBUG %s" % var
-            newAxiom = localizeVar(axiom, var, CONSTANT) # replace a variable with a constant
+            newAxiom = localizeVar(axiom, var, constant_name) # replace a variable with a constant
             newObj = replaceAxiom(obj, axiom, newAxiom) # replace the original axiom with our localized axiom
             newObj = newObj.find_both() # check for proof
             if newObj.proofs.found:
@@ -70,8 +69,6 @@ def localize(obj, goal, ignore_list=[]):
 """
 Main function
 """
-
-CONSTANT = "cLOCAL"  # set name of constant
 
 example = Proverx('abelian.in') # load a proverX file
 result = localize(example, "L(a) -> L(a').") # returns list of proverX objects where the specified goal proof was found -- in this case for L(a) -> L(a')
